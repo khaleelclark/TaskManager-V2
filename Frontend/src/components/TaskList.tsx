@@ -27,8 +27,8 @@ type Props = {
 
 type Task = {
   taskId: number;
-  Description: string;
-  IsComplete: boolean;
+  description: string;
+  isComplete: boolean;
 };
 
 export default function TaskList({ taskList }: Props) {
@@ -119,11 +119,12 @@ export default function TaskList({ taskList }: Props) {
             key={task.taskId}
             secondaryAction={
               <Stack direction="row" spacing={1}>
+                <Typography>{task.description}</Typography>
                 <Tooltip title="Edit task">
                   <IconButton
                     onClick={() => {
                       setEditingId(task.taskId);
-                      setEditText(task.Description);
+                      setEditText(task.description);
                     }}
                     size="small"
                   >
