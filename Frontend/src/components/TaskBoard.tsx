@@ -17,29 +17,42 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import TaskList from "./TaskList";
 import axios from "axios";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 type Props = {
   taskList: any;
+  userID: string;
 };
 
 type TaskListType = {
-  id: string;
-  name: string;
+  taskListID: string;
+  title: string;
 };
 
-export default function TaskBoard({ taskList }: Props) {
+export default function TaskBoard({ taskList, userID }: Props) {
   const [selectedList, setSelectedList] = useState<TaskListType | null>(null);
   const [newListName, setNewListName] = useState("");
   const [editingListId, setEditingListId] = useState<string | null>(null);
   const [editedName, setEditedName] = useState("");
+  const [taskLists, setTaskLists] = useState<TaskListType[]>(taskList);
 
+  //add task list - completed/working
   const addTaskList = () => {
     if (newListName.trim()) {
-      const newList = { id: Date.now().toString(), name: newListName };
+      const newList: any = {
+        title: newListName,
+        userID: userID,
+      };
       setTaskLists([...taskLists, newList]);
       setNewListName("");
-      axios.post("/api/TaskLists", newList);
+      axios.post("http://localhost:5000/api/TaskLists", newList);
     }
+  };
+
+  //delete task list - working
+  const handleDeleteList = (id: string) => {
+    setTaskLists(taskLists.filter((list) => list.taskListID !== id));
+    axios.delete(`http://localhost:5000/api/TaskLists/${id}`);
   };
 
   const updateListName = (id: string) => {
@@ -51,7 +64,6 @@ export default function TaskBoard({ taskList }: Props) {
     setEditingListId(null);
     // await axios.put(`/api/tasklists/${id}`, { name: editedName });
   };
-
   return (
     <Stack direction="row" spacing={4} mt={4}>
       <Paper elevation={3} sx={{ p: 3, width: 300 }}>
@@ -60,23 +72,34 @@ export default function TaskBoard({ taskList }: Props) {
         </Typography>
         <Divider sx={{ mb: 2 }} />
         <List dense>
-          {taskList.map((list) => (
+          {taskLists.map((list) => (
             <ListItem
               key={list.taskListID}
               disablePadding
               secondaryAction={
-                <Tooltip title="Edit list name">
-                  <IconButton
-                    edge="end"
-                    onClick={() => {
-                      setEditingListId(list.taskListID);
-                      setEditedName(list.title);
-                    }}
-                    size="small"
-                  >
-                    <EditIcon fontSize="small" />
-                  </IconButton>
-                </Tooltip>
+                <Stack direction="row" spacing={1}>
+                  <Tooltip title="Edit list name">
+                    <IconButton
+                      edge="end"
+                      onClick={() => {
+                        setEditingListId(list.taskListID);
+                        setEditedName(list.title);
+                      }}
+                      size="small"
+                    >
+                      <EditIcon fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="Delete list">
+                    <IconButton
+                      edge="end"
+                      onClick={() => handleDeleteList(list.taskListID)}
+                      size="small"
+                    >
+                      <DeleteIcon fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
+                </Stack>
               }
             >
               {editingListId === list.taskListID ? (
@@ -93,7 +116,7 @@ export default function TaskBoard({ taskList }: Props) {
                 />
               ) : (
                 <ListItemButton
-                  selected={selectedList?.id === list.taskListID}
+                  selected={selectedList?.taskListID === list.taskListID}
                   onClick={() => {
                     setSelectedList(list);
                   }}

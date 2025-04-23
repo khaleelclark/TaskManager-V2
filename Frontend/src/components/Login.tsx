@@ -27,13 +27,18 @@ export default function Login({ onLogin }: Props) {
     axios.get(`http://localhost:5000/api/users/${email}`).then((res) => {
       console.log(res);
       if (res.data.length == 0)
-        axios.post(`http://localhost:5000/api/users`, { email: email });
+        axios
+          .post(`http://localhost:5000/api/users`, { email: email })
+          .then((response) => {
+            console.log(response);
+            onLogin(response.data.userID, "");
+          });
       else
         axios
           .get(
             `http://localhost:5000/api/TaskLists?UserID=${res.data[0].userID}`
           )
-          .then((res2) => onLogin(email, res2.data)); //set state  & display tasks
+          .then((res2) => onLogin(res.data[0].userID, res2.data)); //set state  & display tasks
     });
   };
 

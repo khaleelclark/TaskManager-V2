@@ -47,10 +47,15 @@ public class TaskListsController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(string id)
     {
-        string query = "DELETE FROM TaskLists WHERE TaskListID = @Id";
-        var result = await _dbHelper.ExecuteAsync(query, new { Id = id });
+        // string query1 = "DELETE FROM Tasks WHERE TaskListID = @Id";
+        // var result1 = await _dbHelper.ExecuteAsync(query1, new { Id = id });
 
-        if (result == 0)
+
+        string query2 = "DELETE FROM TaskLists WHERE TaskListID = @Id";
+        var result2 = await _dbHelper.ExecuteAsync(query2, new { Id = id });
+
+        //if (result1 == 0 || result2 == 0)
+        if (result2 == 0)
             return NotFound();
 
         return NoContent();
