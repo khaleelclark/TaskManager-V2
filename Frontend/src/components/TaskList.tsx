@@ -20,7 +20,7 @@ import axios from "axios";
 
 type Props = {
   taskList: {
-    taskListId: string;
+    taskListID: string;
     title: string;
   };
 };
@@ -61,10 +61,7 @@ export default function TaskList({ taskList }: Props) {
       setShowConfetti(true);
       setTimeout(() => setShowConfetti(false), 3000);
     }
-      axios.put(`http://localhost:5000/api/tasks/${taskId}/toggle`, {
-      taskId: taskId,
-      isComplete: tasks.isCompleted,
-    }
+    axios.put(`http://localhost:5000/api/tasks/${taskId}/toggle`);
   };
 
   //delete tasks - working
