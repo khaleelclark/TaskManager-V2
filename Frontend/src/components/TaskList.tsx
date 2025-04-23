@@ -26,9 +26,9 @@ type Props = {
 };
 
 type Task = {
-  taskId: string;
-  description: string;
-  isCompleted: boolean;
+  taskID: string;
+  Description: string;
+  IsComplete: boolean;
 };
 
 export default function TaskList({ taskList }: Props) {
@@ -50,47 +50,49 @@ export default function TaskList({ taskList }: Props) {
   }, [taskList]);
 
   //toggle complete - not working
-  const handleToggle = (taskId: string) => {
+  const handleToggle = (taskID: string) => {
     const updatedTasks = tasks.map((task) =>
-      task.taskId === taskId
-        ? { ...task, isCompleted: !task.isCompleted }
-        : task
+      task.taskID === taskID ? { ...task, IsCompleted: !task.IsComplete } : task
     );
     setTasks(updatedTasks);
-    if (updatedTasks.length > 0 && updatedTasks.every((t) => t.isCompleted)) {
+    if (updatedTasks.length > 0 && updatedTasks.every((t) => t.IsComplete)) {
       setShowConfetti(true);
       setTimeout(() => setShowConfetti(false), 3000);
     }
-    axios.put(`http://localhost:5000/api/tasks/${taskId}/toggle`);
+    axios.put(`http://localhost:5000/api/tasks/${taskID}/toggle`);
   };
 
   //delete tasks - working
-  const handleDelete = (taskId: string) => {
-    setTasks(tasks.filter((task) => task.taskId !== taskId));
-    axios.delete(`http://localhost:5000/api/tasks/${taskId}`);
+  const handleDelete = (taskID: string) => {
+    setTasks(tasks.filter((task) => task.taskID !== taskID));
+    axios.delete(`http://localhost:5000/api/tasks/${taskID}`);
   };
 
+  //add tasks - working
   const addTask = () => {
-    if (newTask.trim()) {
-      const task = {
-        taskId: Date.now().toString(),
-        description: newTask,
-        isCompleted: false,
-      };
-      setTasks([...tasks, task]);
+    if (!newTask.trim()) return;
+
+    const taskData = {
+      Description: newTask,
+      IsCompleted: false,
+      TaskListId: taskList.taskListID,
+    };
+
+    axios.post("http://localhost:5000/api/tasks", taskData).then((response) => {
+      const createdTask: Task = response.data;
+      setTasks((prev) => [...prev, createdTask]);
       setNewTask("");
-      // await axios.post(`/api/tasks`, { ...task, listId: taskList.taskId });
-    }
+    });
   };
 
-  const updateTaskText = (taskId: string) => {
+  const updateTaskText = (taskID: string) => {
     setTasks(
       tasks.map((t) =>
-        t.taskId === taskId ? { ...t, description: editText } : t
+        t.taskID === taskID ? { ...t, Description: editText } : t
       )
     );
     setEditingId(null);
-    // await axios.put(`/api/tasks/${taskId}`, { description: editText });
+    // await axios.put(`/api/tasks/${taskID}`, { Description: editText });
   };
 
   return (
@@ -101,14 +103,14 @@ export default function TaskList({ taskList }: Props) {
       <List dense>
         {tasks.map((task) => (
           <ListItem
-            key={task.taskId}
+            key={task.taskID}
             secondaryAction={
               <Stack direction="row" spacing={1}>
                 <Tooltip title="Edit task">
                   <IconButton
                     onClick={() => {
-                      setEditingId(task.taskId);
-                      setEditText(task.description);
+                      setEditingId(task.taskID);
+                      setEditText(task.Description);
                     }}
                     size="small"
                   >
@@ -118,7 +120,7 @@ export default function TaskList({ taskList }: Props) {
                 <Tooltip title="Delete task">
                   <IconButton
                     onClick={() => {
-                      handleDelete(task.taskId);
+                      handleDelete(task.taskID);
                     }}
                     size="small"
                   >
@@ -130,16 +132,16 @@ export default function TaskList({ taskList }: Props) {
           >
             <Checkbox
               edge="start"
-              checked={task.isCompleted}
-              onChange={() => handleToggle(task.taskId)}
+              checked={task.IsComplete}
+              onChange={() => handleToggle(task.taskID)}
             />
-            {editingId === task.taskId ? (
+            {editingId === task.taskID ? (
               <TextField
                 value={editText}
                 onChange={(e) => setEditText(e.target.value)}
-                onBlur={() => updateTaskText(task.taskId)}
+                onBlur={() => updateTaskText(task.taskID)}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter") updateTaskText(task.taskId);
+                  if (e.key === "Enter") updateTaskText(task.taskID);
                 }}
                 size="small"
                 autoFocus
@@ -147,10 +149,10 @@ export default function TaskList({ taskList }: Props) {
               />
             ) : (
               <ListItemText
-                primary={task.description}
+                primary={task.Description}
                 sx={{
-                  textDecoration: task.isCompleted ? "line-through" : "none",
-                  color: task.isCompleted ? "text.secondary" : "text.primary",
+                  textDecoration: task.IsComplete ? "line-through" : "none",
+                  color: task.IsComplete ? "text.secondary" : "text.primary",
                 }}
               />
             )}
