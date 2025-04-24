@@ -52,14 +52,14 @@ export default function TaskList({ taskList }: Props) {
   //toggle complete - not working
   const handleToggle = (taskId: number) => {
     const updatedTasks = tasks.map((task) =>
-      task.taskId === taskId ? { ...task, IsComplete: !task.isComplete } : task
+      task.taskId === taskId ? { ...task, isComplete: !task.isComplete } : task
     );
     setTasks(updatedTasks);
     if (updatedTasks.length > 0 && updatedTasks.every((t) => t.isComplete)) {
       setShowConfetti(true);
       setTimeout(() => setShowConfetti(false), 3000);
     }
-    //axios.put(`http://localhost:5000/api/tasks/${taskId}/toggle`);
+    axios.put(`http://localhost:5000/api/tasks/${taskId}/toggle`);
   };
 
   //delete tasks - working
@@ -74,7 +74,7 @@ export default function TaskList({ taskList }: Props) {
 
     const taskData = {
       Description: newTask,
-      IsComplete: false,
+      isComplete: false,
       TaskListId: taskList.taskListID,
     };
 
@@ -85,15 +85,17 @@ export default function TaskList({ taskList }: Props) {
     });
   };
 
+  //update task description - not working
   const updateTaskText = (taskId: number) => {
     setTasks(
       tasks.map((t) =>
-        t.taskId === taskId ? { ...t, Description: editText } : t
+        t.taskId === taskId ? { ...t, description: editText } : t
       )
     );
     setEditingId(null);
-    axios.put(`http://localhost:5000/api/tasks/${taskId}`, {
-      Description: editText,
+    axios.put(`http://localhost:5000/api/tasks/description`, {
+      taskId,
+      description: editText,
     });
   };
 
@@ -108,7 +110,6 @@ export default function TaskList({ taskList }: Props) {
             key={task.taskId}
             secondaryAction={
               <Stack direction="row" spacing={1}>
-                {/* <Typography>{task.description}</Typography> */}
                 <Tooltip title="Edit task">
                   <IconButton
                     onClick={() => {

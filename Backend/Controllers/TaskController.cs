@@ -33,7 +33,7 @@ public class TasksController : ControllerBase
     }
 
     // Update task Description
-    [HttpPut]
+    [HttpPut("description")]
     public async Task<IActionResult> UpdateDescription([FromBody] Task updated)
     {
         string query = "UPDATE Tasks SET Description = @Description WHERE TaskId = @TaskId";
