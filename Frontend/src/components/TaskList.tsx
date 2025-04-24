@@ -85,7 +85,7 @@ export default function TaskList({ taskList }: Props) {
     });
   };
 
-  //update task description - not working
+  //update task description - working
   const updateTaskText = (taskId: number) => {
     setTasks(
       tasks.map((t) =>

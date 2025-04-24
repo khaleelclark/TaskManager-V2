@@ -46,17 +46,18 @@ public class TasksController : ControllerBase
     }
 
     // Toggle task completion
-    [HttpPut("{TaskId}/toggle")]
-   public async Task<IActionResult> Toggle([FromBody] Task updated)
-    {
-        string query = "UPDATE Tasks SET IsComplete = @IsComplete WHERE TaskId = @TaskId";
-        var result = await _dbHelper.ExecuteAsync(query, new { updated.IsComplete, updated.TaskId });
+[HttpPut("{taskId}/toggle")]
+public async Task<IActionResult> Toggle(int taskId)
+{
+    string query = "UPDATE Tasks SET IsComplete = ~IsComplete WHERE TaskId = @TaskId";
+    var result = await _dbHelper.ExecuteAsync(query, new { TaskId = taskId });
 
-        if (result == 0)
-            return NotFound();
+    if (result == 0)
+        return NotFound();
 
-        return NoContent();
-    }
+    return NoContent();
+}
+
 
 
     // Delete a task
