@@ -33,7 +33,7 @@ export default function TaskBoard({ taskList, userID }: Props) {
   const [selectedList, setSelectedList] = useState<TaskListType | null>(null);
   const [newListName, setNewListName] = useState("");
   const [editingListId, setEditingListId] = useState<string | null>(null);
-  const [editedName, setEditedName] = useState("");
+  const [editedTitle, setEditedTitle] = useState("");
   const [taskLists, setTaskLists] = useState<TaskListType[]>(taskList);
 
   //add task list - completed/working
@@ -55,14 +55,17 @@ export default function TaskBoard({ taskList, userID }: Props) {
     axios.delete(`http://localhost:5000/api/TaskLists/${id}`);
   };
 
-  const updateListName = (id: string) => {
-    // setTaskLists(
-    //   taskLists.map((list) =>
-    //     list.taskListID === id ? { ...list, name: editedName } : list
-    //   )
-    // );
+  //update task list - not working
+  const updateListTitle = (id: string) => {
+    setTaskLists(
+      taskLists.map((list) =>
+        list.taskListID === id ? { ...list, title: editedTitle } : list
+      )
+    );
     setEditingListId(null);
-    // await axios.put(`/api/tasklists/${id}`, { name: editedName });
+    axios.put(`http://localhost:5000/api/tasklists/${id}`, {
+      title: editedTitle,
+    });
   };
   return (
     <Stack direction="row" spacing={4} mt={4}>
@@ -83,7 +86,7 @@ export default function TaskBoard({ taskList, userID }: Props) {
                       edge="end"
                       onClick={() => {
                         setEditingListId(list.taskListID);
-                        setEditedName(list.title);
+                        setEditedTitle(list.title);
                       }}
                       size="small"
                     >
@@ -105,11 +108,11 @@ export default function TaskBoard({ taskList, userID }: Props) {
               {editingListId === list.taskListID ? (
                 <TextField
                   size="small"
-                  value={editedName}
-                  onChange={(e) => setEditedName(e.target.value)}
-                  onBlur={() => updateListName(list.taskListID)}
+                  value={editedTitle}
+                  onChange={(e) => setEditedTitle(e.target.value)}
+                  onBlur={() => updateListTitle(list.taskListID)}
                   onKeyDown={(e) => {
-                    if (e.key === "Enter") updateListName(list.taskListID);
+                    if (e.key === "Enter") updateListTitle(list.taskListID);
                   }}
                   autoFocus
                   fullWidth

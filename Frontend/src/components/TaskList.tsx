@@ -52,10 +52,10 @@ export default function TaskList({ taskList }: Props) {
   //toggle complete - not working
   const handleToggle = (taskId: number) => {
     const updatedTasks = tasks.map((task) =>
-      task.taskId === taskId ? { ...task, IsComplete: !task.IsComplete } : task
+      task.taskId === taskId ? { ...task, IsComplete: !task.isComplete } : task
     );
     setTasks(updatedTasks);
-    if (updatedTasks.length > 0 && updatedTasks.every((t) => t.IsComplete)) {
+    if (updatedTasks.length > 0 && updatedTasks.every((t) => t.isComplete)) {
       setShowConfetti(true);
       setTimeout(() => setShowConfetti(false), 3000);
     }
@@ -85,19 +85,6 @@ export default function TaskList({ taskList }: Props) {
     });
   };
 
-  // const addTask = () => {
-  //   if (newTask.trim()) {
-  //     const task = {
-  //       taskId: Date.now().toString(),
-  //       Description: newTask,
-  //       IsComplete: false,
-  //     };
-  //     setTasks([...tasks, task]);
-  //     setNewTask("");
-  //     // await axios.post(`/api/tasks`, { ...task, listId: taskList.taskId });
-  //   }
-  // };
-
   const updateTaskText = (taskId: number) => {
     setTasks(
       tasks.map((t) =>
@@ -105,7 +92,9 @@ export default function TaskList({ taskList }: Props) {
       )
     );
     setEditingId(null);
-    // await axios.put(`/api/tasks/${taskId}`, { Description: editText });
+    axios.put(`http://localhost:5000/api/tasks/${taskId}`, {
+      Description: editText,
+    });
   };
 
   return (
@@ -119,7 +108,7 @@ export default function TaskList({ taskList }: Props) {
             key={task.taskId}
             secondaryAction={
               <Stack direction="row" spacing={1}>
-                <Typography>{task.description}</Typography>
+                {/* <Typography>{task.description}</Typography> */}
                 <Tooltip title="Edit task">
                   <IconButton
                     onClick={() => {
@@ -147,7 +136,7 @@ export default function TaskList({ taskList }: Props) {
           >
             <Checkbox
               edge="start"
-              checked={task.IsComplete}
+              checked={task.isComplete}
               onChange={() => handleToggle(task.taskId)}
             />
             {editingId === task.taskId ? (
@@ -164,10 +153,10 @@ export default function TaskList({ taskList }: Props) {
               />
             ) : (
               <ListItemText
-                primary={task.Description}
+                primary={task.description}
                 sx={{
-                  textDecoration: task.IsComplete ? "line-through" : "none",
-                  color: task.IsComplete ? "text.secondary" : "text.primary",
+                  textDecoration: task.isComplete ? "line-through" : "none",
+                  color: task.isComplete ? "text.secondary" : "text.primary",
                 }}
               />
             )}
