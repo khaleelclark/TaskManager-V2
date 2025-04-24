@@ -55,7 +55,7 @@ export default function TaskBoard({ taskList, userID }: Props) {
     axios.delete(`http://localhost:5000/api/TaskLists/${id}`);
   };
 
-  //update task list - not working
+  //update task list name working
   const updateListTitle = (id: string) => {
     setTaskLists(
       taskLists.map((list) =>
