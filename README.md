@@ -1,9 +1,9 @@
 # Khaleel Clark
 ## Software Development I (CRN: 31774)
 
-This is a task manager that I created for the final project of my Advanved Database course.
+This is a task manager that I created for the final project of my Advanced Database course.
 
-For the backend I used a simple.NET backend that is connected with SQL Server.
+For the backend I used a simple .NET backend that is connected with SQL Server.
 For the frontend I used React and Typescript.
 
 This project was supposed to showcase my ability to use a database in a real world enviornment.
