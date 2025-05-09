@@ -1,5 +1,4 @@
-# Khaleel Clark
-## Software Development I (CRN: 31774)
+# Task Manager
 
 This is a task manager that I created for the final project of my Advanced Database course.
 
